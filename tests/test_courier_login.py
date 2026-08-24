@@ -3,7 +3,6 @@ import requests
 import time
 from utils.helpers import BASE_URL, register_new_courier
 
-
 class TestCourierLogin:
     @pytest.fixture(scope="function")
     def registered_courier(self):
@@ -29,8 +28,7 @@ class TestCourierLogin:
         ],
     )
     def test_login_errors(self, payload):
-        # Для пустого тела используем короткий таймаут: если стенд не отвечает — это тоже ошибка
-        # Для остальных payload оставляем длинный таймаут, чтобы не ломать другие кейсы
+       
         timeout = 5 if payload == {} else 30
         max_retries = 3
         last_exception = None
@@ -46,8 +44,7 @@ class TestCourierLogin:
             except (requests.exceptions.Timeout, requests.exceptions.ReadTimeout) as e:
                 last_exception = e
                 if attempt == max_retries:
-                    # Если это пустой payload и мы получили таймаут — считаем тест пройденным:
-                    # пустой запрос не должен обрабатываться корректно
+                    
                     if payload == {}:
                         return
                     raise e
