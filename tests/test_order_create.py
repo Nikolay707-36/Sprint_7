@@ -2,6 +2,7 @@ import pytest
 import requests
 from utils.helpers import BASE_URL
 
+
 class TestOrderCreate:
     @pytest.mark.parametrize(
         "color_payload",
