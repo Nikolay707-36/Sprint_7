@@ -2,6 +2,7 @@ import pytest
 import requests
 from utils.helpers import generate_random_string, BASE_URL
 
+
 class TestCourierCreate:
     @pytest.mark.parametrize(
         "payload,expected_status,expected_ok",
