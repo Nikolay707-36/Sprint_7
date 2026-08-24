@@ -2,6 +2,7 @@ import pytest
 import requests
 from utils.helpers import BASE_URL, register_new_courier, login_courier
 
+
 class TestCourierDelete:
     @pytest.fixture(scope="function")
     def courier_with_id(self):
