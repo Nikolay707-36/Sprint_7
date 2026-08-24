@@ -2,6 +2,7 @@ import pytest
 import requests
 from utils.helpers import BASE_URL
 
+
 class TestOrderGetByTrack:
     @pytest.fixture(scope="function")
     def valid_track(self):
