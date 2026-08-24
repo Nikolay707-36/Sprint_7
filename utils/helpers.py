@@ -2,6 +2,7 @@ import requests
 import random
 import string
 
+
 BASE_URL = "https://qa-scooter.praktikum-services.ru/api/v1"
 
 def generate_random_string(length: int) -> str:
