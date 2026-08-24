@@ -17,4 +17,4 @@ def courier():
     try:
         requests.delete(f"{BASE_URL}/courier/{courier_data['id']}")
     except Exception:
-        pass  # если не удаляется — не ломаем тест
+        pass  
