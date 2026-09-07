@@ -8,7 +8,7 @@ class TestOrderCreate:
     @pytest.mark.parametrize(
         "color_payload",
         [
-            [],                 # Кейс: цвета нет
+            [],  # Кейс: цвета нет
             ["BLACK"],
             ["GREY"],
             ["BLACK", "GREY"],
@@ -17,8 +17,8 @@ class TestOrderCreate:
             "create_no_color",
             "create_black",
             "create_grey",
-            "create_black_grey"
-        ]
+            "create_black_grey",
+        ],
     )
     @allure.title("Создание заказа: цвета {color_payload}")
     def test_order_create_with_colors(self, color_payload):
@@ -37,4 +37,9 @@ class TestOrderCreate:
 
         response = requests.post(f"{BASE_URL}/orders", json=payload, timeout=15)
         assert response.status_code in [200, 201]
-        assert "track" in response.json()
+        json_resp = response.json()
+        assert "track" in json_resp
+
+        # Стенд Sprint_7 может возвращать track как int или str — принимаем оба варианта
+        track = json_resp["track"]
+        assert isinstance(track, (str, int))

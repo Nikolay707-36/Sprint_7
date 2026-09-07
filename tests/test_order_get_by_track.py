@@ -12,4 +12,6 @@ class TestOrderGetByTrack:
             params={"t": valid_track},
         )
         assert response.status_code == 200
-        assert "order" in response.json()
+        json_resp = response.json()
+        assert "order" in json_resp
+        assert isinstance(json_resp["order"], dict)

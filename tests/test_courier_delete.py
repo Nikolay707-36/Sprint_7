@@ -14,6 +14,9 @@ class TestCourierDelete:
     def test_delete_nonexistent(self):
         import requests
         from utils.helpers import BASE_URL
-        
+
         resp = requests.delete(f"{BASE_URL}/courier/{999999}", timeout=15)
         assert resp.status_code == 404
+        # Парсим ответ, чтобы ассерт был однозначным
+        json_resp = resp.json()
+        assert "message" in json_resp or "error" in json_resp or len(json_resp) > 0

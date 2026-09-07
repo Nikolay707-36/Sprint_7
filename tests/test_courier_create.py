@@ -29,21 +29,23 @@ class TestCourierCreate:
             "create_success",
             "create_empty_login",
             "create_no_login",
-            "create_no_password"
-        ]
+            "create_no_password",
+        ],
     )
     @allure.title("Создание курьера: статус {expected_status} (кейс: {payload})")
     def test_create_courier(self, payload, expected_status, expect_ok_field):
-        # Для регистрации курьера API ожидает form-data (data=payload)
         response = requests.post(f"{BASE_URL}/courier", data=payload, timeout=15)
-        
+
         assert response.status_code == expected_status
-        
+
+        json_resp = response.json()
+
         if expect_ok_field:
-            # Проверяем поле ok только для успешных сценариев
-            assert response.json().get("ok") is True
+            # Для успеха проверяем, что ok есть и он True
+            assert "ok" in json_resp
+            assert json_resp["ok"] is True
         else:
-            # Для ошибок можно проверить отсутствие ok или его ложность, 
-            # но часто в ошибках это поле просто не приходит.
-            # Достаточно проверки статуса.
-            pass
+            # Для ошибок проверяем, что ok либо False, либо отсутствует
+            if "ok" in json_resp:
+                assert json_resp["ok"] is False
+            # Если ok нет — это тоже валидное поведение для ошибки

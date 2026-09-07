@@ -3,6 +3,7 @@ import requests
 import time
 from utils.helpers import BASE_URL, register_new_courier, login_courier
 
+
 @pytest.fixture
 def courier():
     login = f"courier_{int(time.time() * 1000)}"
@@ -19,14 +20,14 @@ def courier():
 
     # Используем data= для регистрации (form-data), как требует API
     reg_resp = register_new_courier(reg_payload)
-    
+
     if reg_resp.status_code not in (201, 200):
         pytest.fail(f"Регистрация курьера не удалась: status={reg_resp.status_code}, body={reg_resp.text}")
 
     # Логинимся, чтобы убедиться, что курьер создан
     login_payload = {"login": login, "password": password}
     login_resp = login_courier(login_payload)
-    
+
     if login_resp.status_code != 200:
         pytest.fail(f"Не удалось залогиниться: status={login_resp.status_code}, body={login_resp.text}")
 
@@ -40,10 +41,11 @@ def courier():
     # Очистка (не должна ломать тест, если стенд не поддерживает удаление)
     try:
         delete_resp = requests.delete(f"{BASE_URL}/courier?login={login}", timeout=10)
-        if delete_resp.status_code not in (200, 204, 404):
-            print(f"Warning: courier delete returned {delete_resp.status_code}")
-    except Exception as e:
-        print(f"Warning: exception during courier cleanup: {e}")
+        # Если удаление вернуло что-то кроме 200/204/404 — это не ошибка теста, просто логируем молча
+        # print убран по требованию ревьюера
+    except Exception:
+        # Исключения при удалении тоже не логируем через print
+        pass
 
 
 @pytest.fixture
@@ -63,10 +65,10 @@ def valid_track():
     }
     # Увеличиваем таймаут для создания заказа, чтобы избежать случайных таймаутов
     resp = requests.post(f"{BASE_URL}/orders", json=payload, timeout=60)
-    
+
     if resp.status_code not in (200, 201):
         pytest.fail(f"Не удалось создать заказ для фикстуры valid_track: status={resp.status_code}, body={resp.text}")
-    
+
     try:
         return resp.json()["track"]
     except KeyError:
@@ -88,19 +90,19 @@ def order(courier):
         "rentTime": 1,
         "deliveryDate": "2024-01-05",
     }
-    
+
     # Создаем заказ
     resp = requests.post(f"{BASE_URL}/orders", json=payload, timeout=60)
-    
+
     if resp.status_code not in (200, 201):
         pytest.fail(f"Не удалось создать заказ для фикстуры order: status={resp.status_code}, body={resp.text}")
-    
+
     try:
         data = resp.json()
         order_data = {
             "track": data["track"],
             "id": data.get("id"),
-            "status": data.get("status")
+            "status": data.get("status"),
         }
         return order_data
     except KeyError:
